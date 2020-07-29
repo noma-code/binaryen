@@ -30,20 +30,19 @@
 
 namespace wasm {
 
-struct GenerateDynCalls
-  : public WalkerPass<PostWalker<GenerateDynCalls>> {
+struct GenerateDynCalls : public WalkerPass<PostWalker<GenerateDynCalls>> {
 
   void visitTable(Table* table) {
     if (table->segments.size() > 0) {
       EmscriptenGlueGenerator generator(*getModule());
       std::vector<Name> tableSegmentData;
       for (const auto& indirectFunc : table->segments[0].data) {
-        generator.generateDynCallThunk(getModule()->getFunction(indirectFunc)->sig);
+        generator.generateDynCallThunk(
+          getModule()->getFunction(indirectFunc)->sig);
       }
     }
   }
 };
-
 
 Pass* createGenerateDynCallsPass() { return new GenerateDynCalls; }
 
